@@ -1,0 +1,15 @@
+name = "snake"
+description = "Snake Game"
+version = "0.1.0-dev"
+
+authors = ["Vadim Godunko"]
+maintainers = ["Vadim Godunko <vgodunko@gmail.com>"]
+maintainers-logins = ["godunko"]
+licenses = "GPL-3.0-or-later"
+website = ""
+tags = ["snake", "game"]
+
+executables = ["snake"]
+
+[[depends-on]]
+gtkada = "^25.0.1"
