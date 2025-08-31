@@ -4,6 +4,8 @@ Snake is a fun and engaging Snake game written in Ada.
 Control your snake, eat the food, and avoid obstacles or your own tail! 
 Simple, nostalgic, and perfect for a quick coding challenge or retro gaming break.
 
+<p align=center><img src=gameplay.gif width=200 height=200 align=center /></p>
+
 # 🚀 Features
 
 * Classic Gameplay: Relive the nostalgic Snake experience with a modern touch.
