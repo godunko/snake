@@ -11,5 +11,10 @@ tags = ["snake", "game", "gtkada"]
 
 executables = ["../bin/snake"]
 
+[configuration]
+generate_ada = false
+generate_c = false
+generate_gpr = true
+
 [[depends-on]]
 gtkada = "^25.0.1"
