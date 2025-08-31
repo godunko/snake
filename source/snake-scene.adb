@@ -22,7 +22,7 @@ package body Snake.Scene is
       Board := [others => [others => (Empty)]];
 
       Snake_Body := (Head => 0, Tail => 0, others => [(8, 4), others => <>]);
-      Board (8, 4) := Snake;
+      Board (8, 4) := Creature;
 
       Board (8, 12) := Apple;
    end Initialize;
@@ -148,7 +148,7 @@ package body Snake.Scene is
                Board (Row, Column) := Apple;
             end;
 
-         elsif Board (Head.Row, Head.Column) = Snake then
+         elsif Board (Head.Row, Head.Column) = Creature then
             Board (Head.Row, Head.Column) := Crash;
             Snake_Body.Head := @ + 1;
             Snake_Body.Cells (Snake_Body.Head) := Head;
@@ -158,7 +158,7 @@ package body Snake.Scene is
       end if;
 
       if Move_Head then
-         Board (Head.Row, Head.Column) := Snake;
+         Board (Head.Row, Head.Column) := Creature;
          Snake_Body.Head := @ + 1;
          Snake_Body.Cells (Snake_Body.Head) := Head;
       end if;

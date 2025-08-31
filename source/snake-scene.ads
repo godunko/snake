@@ -3,7 +3,7 @@ with Snake.Controller;
 
 package Snake.Scene is
 
-   type Cell_Kind is (Empty, Wall, Apple, Snake, Crash);
+   type Cell_Kind is (Empty, Wall, Apple, Creature, Crash);
 
    --  type Coordinate_X is range 1 .. 16;
 

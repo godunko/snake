@@ -104,7 +104,7 @@ package body Snake.Graphics_Views is
                when Snake.Scene.Apple =>
                   Gdk.Cairo.Set_Source_RGBA (Cr, (1.0, 0.86, 0.12, 1.0));
 
-               when Snake.Scene.Snake =>
+               when Snake.Scene.Creature =>
                   Gdk.Cairo.Set_Source_RGBA (Cr, (0.0, 1.0, 0.0, 1.0));
 
                when Snake.Scene.Crash =>
