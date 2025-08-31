@@ -109,6 +109,9 @@ package body Snake.Graphics_Views is
 
                when Snake.Scene.Crash =>
                   Gdk.Cairo.Set_Source_RGBA (Cr, (1.0, 0.0, 0.0, 1.0));
+
+               when Snake.Scene.Font =>
+                  Gdk.Cairo.Set_Source_RGBA (Cr, (1.0, 1.0, 1.0, 1.0));
             end case;
 
             Cairo.Rectangle (Cr, LXB, LYB, L, L);

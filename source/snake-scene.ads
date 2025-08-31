@@ -3,11 +3,16 @@ with Snake.Controller;
 
 package Snake.Scene is
 
-   type Cell_Kind is (Empty, Wall, Apple, Creature, Crash);
+   type Scene_Kind is (Game, Crash, Score);
+
+   type Cell_Kind is (Empty, Wall, Apple, Creature, Crash, Font);
 
    type Game_Board is array (Row_Index, Column_Index) of Cell_Kind;
 
-   Board : Game_Board;
+   Board         : Game_Board;
+   State         : Scene_Kind;
+   High_Score    : Natural := 0;
+   Current_Score : Positive;
 
    procedure Initialize;
 

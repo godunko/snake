@@ -3,6 +3,8 @@ pragma Ada_2022;
 
 with Ada.Numerics.Discrete_Random;
 
+with Snake.Font;
+
 package body Snake.Scene is
 
    subtype Coordinate is Integer range 1 .. 16;
@@ -19,7 +21,9 @@ package body Snake.Scene is
    begin
       Controller.Direction := Controller.Stop;
 
-      Board := [others => [others => (Empty)]];
+      Board         := [others => [others => (Empty)]];
+      State         := Game;
+      Current_Score := 1;
 
       Snake_Body := (Head => 0, Tail => 0, others => [(8, 4), others => <>]);
       Board (8, 4) := Creature;
@@ -37,12 +41,35 @@ package body Snake.Scene is
       Head       : Cell_Coordinate := Snake_Body.Cells (Snake_Body.Head);
       Tail       : constant Cell_Coordinate :=
         Snake_Body.Cells (Snake_Body.Tail);
-      Is_Crashed : constant Boolean := Board (Head.Row, Head.Column) = Crash;
       Move_Head  : Boolean := False;
       Move_Tail  : Boolean := True;
 
    begin
-      if Is_Crashed then
+      if State = Crash then
+         State := Score;
+
+         Board := [others => [others => Empty]];
+
+         return;
+
+      elsif State = Score then
+         declare
+            N1 : constant Natural := Current_Score / 100;
+            N2 : constant Natural := Current_Score / 10 mod 10;
+            N3 : constant Natural := Current_Score mod 10;
+
+         begin
+            if N1 /= 0 then
+               Snake.Font.Draw (6, 3, N1);
+            end if;
+
+            if N2 /= 0 then
+               Snake.Font.Draw (6, 8, N2);
+            end if;
+
+            Snake.Font.Draw (6, 13, N3);
+         end;
+
          return;
       end if;
 
@@ -79,6 +106,7 @@ package body Snake.Scene is
          when Controller.Right =>
             if Head.Column = Board'Last (2) then
                Board (Head.Row, Head.Column) := Crash;
+               State := Crash;
                Snake_Body.Head := @ + 1;
                Snake_Body.Cells (Snake_Body.Head) := Head;
 
@@ -92,6 +120,7 @@ package body Snake.Scene is
          when Controller.Up =>
             if Head.Row = Board'First (1) then
                Board (Head.Row, Head.Column) := Crash;
+               State := Crash;
                Snake_Body.Head := @ + 1;
                Snake_Body.Cells (Snake_Body.Head) := Head;
 
@@ -105,6 +134,7 @@ package body Snake.Scene is
          when Controller.Left =>
             if Head.Column = Board'First (2) then
                Board (Head.Row, Head.Column) := Crash;
+               State := Crash;
                Snake_Body.Head := @ + 1;
                Snake_Body.Cells (Snake_Body.Head) := Head;
 
@@ -118,6 +148,7 @@ package body Snake.Scene is
          when Controller.Down =>
             if Head.Row = Board'Last (1) then
                Board (Head.Row, Head.Column) := Crash;
+               State := Crash;
                Snake_Body.Head := @ + 1;
                Snake_Body.Cells (Snake_Body.Head) := Head;
 
@@ -136,7 +167,8 @@ package body Snake.Scene is
                Column : Column_Index;
 
             begin
-               Move_Tail := False;
+               Move_Tail     := False;
+               Current_Score := @ + 1;
 
                loop
                   Row    := Row_Index (Coordinate_Random.Random (Generator));
@@ -151,6 +183,7 @@ package body Snake.Scene is
 
          elsif Board (Head.Row, Head.Column) = Creature then
             Board (Head.Row, Head.Column) := Crash;
+            State := Crash;
             Snake_Body.Head := @ + 1;
             Snake_Body.Cells (Snake_Body.Head) := Head;
 
