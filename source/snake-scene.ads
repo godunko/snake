@@ -5,10 +5,6 @@ package Snake.Scene is
 
    type Cell_Kind is (Empty, Wall, Apple, Creature, Crash);
 
-   type Row_Index is range 1 .. 16;
-
-   type Column_Index is range 1 .. 16;
-
    type Game_Board is array (Row_Index, Column_Index) of Cell_Kind;
 
    Board : Game_Board;
