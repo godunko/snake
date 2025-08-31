@@ -5,11 +5,11 @@ package Snake.Scene is
 
    type Cell_Kind is (Empty, Wall, Apple, Creature, Crash);
 
-   --  type Coordinate_X is range 1 .. 16;
+   type Row_Index is range 1 .. 16;
 
-   --  type Coordinate_Y is range 1 .. 16;
+   type Column_Index is range 1 .. 16;
 
-   type Game_Board is array (1 .. 16, 1 .. 16) of Cell_Kind;
+   type Game_Board is array (Row_Index, Column_Index) of Cell_Kind;
 
    Board : Game_Board;
 
@@ -20,8 +20,8 @@ package Snake.Scene is
 private
 
    type Cell_Coordinate is record
-      Row    : Integer;
-      Column : Integer;
+      Row    : Row_Index;
+      Column : Column_Index;
    end record;
 
    type Snake_Cell_Index is mod 256;

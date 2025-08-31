@@ -62,6 +62,8 @@ package body Snake.Graphics_Views is
       Cr   : Cairo.Cairo_Context) return Boolean
    is
       use type Glib.Gdouble;
+      use type Snake.Scene.Column_Index;
+      use type Snake.Scene.Row_Index;
 
       W  : constant Glib.Gdouble := Glib.Gdouble (Self.Get_Allocated_Width);
       H  : constant Glib.Gdouble := Glib.Gdouble (Self.Get_Allocated_Height);

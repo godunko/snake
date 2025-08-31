@@ -77,7 +77,7 @@ package body Snake.Scene is
             Move_Tail := False;
 
          when Controller.Right =>
-            if Head.Column = Board'Last (1) then
+            if Head.Column = Board'Last (2) then
                Board (Head.Row, Head.Column) := Crash;
                Snake_Body.Head := @ + 1;
                Snake_Body.Cells (Snake_Body.Head) := Head;
@@ -90,7 +90,7 @@ package body Snake.Scene is
             end if;
 
          when Controller.Up =>
-            if Head.Row = Board'First (2) then
+            if Head.Row = Board'First (1) then
                Board (Head.Row, Head.Column) := Crash;
                Snake_Body.Head := @ + 1;
                Snake_Body.Cells (Snake_Body.Head) := Head;
@@ -103,7 +103,7 @@ package body Snake.Scene is
             end if;
 
          when Controller.Left =>
-            if Head.Column = Board'First (1) then
+            if Head.Column = Board'First (2) then
                Board (Head.Row, Head.Column) := Crash;
                Snake_Body.Head := @ + 1;
                Snake_Body.Cells (Snake_Body.Head) := Head;
@@ -116,7 +116,7 @@ package body Snake.Scene is
             end if;
 
          when Controller.Down =>
-            if Head.Row = Board'Last (2) then
+            if Head.Row = Board'Last (1) then
                Board (Head.Row, Head.Column) := Crash;
                Snake_Body.Head := @ + 1;
                Snake_Body.Cells (Snake_Body.Head) := Head;
@@ -132,15 +132,16 @@ package body Snake.Scene is
       if Move_Head then
          if Board (Head.Row, Head.Column) = Apple then
             declare
-               Row    : Coordinate;
-               Column : Coordinate;
+               Row    : Row_Index;
+               Column : Column_Index;
 
             begin
                Move_Tail := False;
 
                loop
-                  Row    := Coordinate_Random.Random (Generator);
-                  Column := Coordinate_Random.Random (Generator);
+                  Row    := Row_Index (Coordinate_Random.Random (Generator));
+                  Column :=
+                    Column_Index (Coordinate_Random.Random (Generator));
 
                   exit when Board (Row, Column) = Empty;
                end loop;
