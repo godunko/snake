@@ -1,5 +1,5 @@
-name = "snake"
-description = "Snake Game"
+name = "snake_gtkada"
+description = "Snake Game (GtkAda)"
 version = "0.1.0-dev"
 
 authors = ["Vadim Godunko"]
@@ -7,9 +7,9 @@ maintainers = ["Vadim Godunko <vgodunko@gmail.com>"]
 maintainers-logins = ["godunko"]
 licenses = "GPL-3.0-or-later"
 website = ""
-tags = ["snake", "game"]
+tags = ["snake", "game", "gtkada"]
 
-executables = ["snake"]
+executables = ["../bin/snake"]
 
 [[depends-on]]
 gtkada = "^25.0.1"
