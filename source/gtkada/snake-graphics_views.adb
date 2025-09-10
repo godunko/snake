@@ -48,6 +48,7 @@ package body Snake.Graphics_Views is
       Snake.Scene.Initialize;
 
       Gtk.Drawing_Area.Initialize (Self);
+      Self.Set_Size_Request (450, 450);
       Self.Set_Can_Focus (True);
       Self.On_Draw (On_Draw_Dispatch'Access);
       Self.On_Key_Press_Event (On_Key_Press_Event_Dispatch'Access);
