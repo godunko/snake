@@ -1,0 +1,25 @@
+name = "snake_weact_blackpill_stm32f401"
+description = "Snake game for WeAct BlackPill STM32F401"
+version = "0.1.0-dev"
+
+authors = ["Vadim Godunko"]
+maintainers = ["Vadim Godunko <vgodunko@gmail.com>"]
+maintainers-logins = ["godunko"]
+licenses = "GPL-3.0-or-later"
+tags = ["embedded", "game", "snake"]
+
+project-files = ["snake_weact_blackpill_stm32f401.gpr"]
+
+[configuration]
+generate_ada = false
+generate_c = false
+generate_gpr = true
+
+[[actions]]
+type = "post-build"
+command = ["arm-eabi-objcopy", "-O", "binary", "../bin/snake_weact_blackpill_stm32f401.elf", "../bin/snake_weact_blackpill_stm32f401.bin"]
+
+[[depends-on]]
+a0b_armv7m_systick_clock_timer = "*"
+a0b_timer = "*"
+light_blackpill_stm32f401 = "*"

@@ -1,0 +1,6 @@
+/.objs/
+/Makefile
+/alire/
+/config/
+/gdbinit
+/openocd.cfg
