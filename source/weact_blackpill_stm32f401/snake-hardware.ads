@@ -13,7 +13,7 @@ package Snake.Hardware is
    TIM_T1H : constant := 67;   --  ~0.8 us
 
    NEOPIXEL : A0B.STM32F401.GPIO.GPIO_Line
-     renames A0B.STM32F401.GPIO.PIOB.PB8;
+     renames A0B.STM32F401.GPIO.PIOB.PB4;
 
    procedure Initialize;
 
