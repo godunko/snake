@@ -21,5 +21,6 @@ command = ["arm-eabi-objcopy", "-O", "binary", "../bin/snake_weact_blackpill_stm
 
 [[depends-on]]
 a0b_armv7m_systick_clock_timer = "*"
+a0b_stm32f401_gpio = "*"
 a0b_timer = "*"
 light_blackpill_stm32f401 = "*"
