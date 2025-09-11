@@ -4,16 +4,59 @@
 --  SPDX-License-Identifier: GPL-3.0-or-later
 --
 
+with System.Storage_Elements;
+
+with A0B.STM32F401.SVD.DMA;
 with A0B.STM32F401.SVD.RCC;
 with A0B.STM32F401.SVD.TIM;
 with A0B.STM32F401.TIM_Function_Lines;
+with A0B.Types;
 
 package body Snake.Display.Hardware is
 
+   --  use type A0B.Types.Unsigned_32;
+
+   --  PIXELS : constant := 256;
+   PIXELS : constant := 128;
+
+   PIXEL_PWM_CYCLES : constant := 24;
+   --  Number of PWM cycles to send pixel's state
+   RST_PWM_CYCLES   : constant := 40;
+   --  Number of PWM cycles to send RST command
+
+   TIM_ARR     : constant := 105 - 1;  --  800 kHz when runs at 84 MHz
+   TIM_CCR_RST : constant := 0;        --  line is inactive (low level)
+   TIM_CCR_DIS : constant := TIM_ARR + 1;
+   TIM_CCR_T0H : constant := 34;       --  ~0.4 us
+   TIM_CCR_T1H : constant := 67;       --  ~0.8 us
+
    TIM : A0B.STM32F401.SVD.TIM.TIM3_Peripheral
      renames A0B.STM32F401.SVD.TIM.TIM3_Periph;
+   DMA : A0B.STM32F401.SVD.DMA.DMA_Peripheral
+     renames A0B.STM32F401.SVD.DMA.DMA1_Periph;
+
+   Buffer : array (0 .. RST_PWM_CYCLES + (PIXELS * PIXEL_PWM_CYCLES))
+              of A0B.Types.Unsigned_16 with Volatile;
+   --  DMA data buffer. First RST_PWM_CYCLES items are used to send RST
+   --  command. Last item is used to force stable output level after
+   --  data transmission.
+
+   procedure Initialize_DMA1_CH5_Stream2;
 
    procedure Initialize_TIM3;
+
+   procedure Enable_TIM3;
+
+   -----------------
+   -- Enable_TIM3 --
+   -----------------
+
+   procedure Enable_TIM3 is
+   begin
+      TIM.CCR1.CCR1_L := TIM_CCR_DIS;
+      TIM.CR1.ARPE    := True;
+      TIM.CR1.CEN     := True;
+   end Enable_TIM3;
 
    ----------------
    -- Initialize --
@@ -29,38 +72,96 @@ package body Snake.Display.Hardware is
          Speed => A0B.STM32F401.GPIO.Very_High,
          Pull  => A0B.STM32F401.GPIO.Pull_Up);  --  ??? No ???
 
-      ---------------------------------------------------------------------
+      Initialize_DMA1_CH5_Stream2;
 
-      --  RST
-
-      for J in 1 .. 50 loop
-         loop
-            exit when TIM.SR.UIF;
-         end loop;
-
-         TIM.SR.UIF := False;
+      for J in 0 .. RST_PWM_CYCLES - 1 loop
+         Buffer (J) := TIM_CCR_RST;
       end loop;
 
-      for K in 1 .. 59 loop
-         for J in 1 .. 24 loop
-            if K mod 2 = 0 then
-            --  if K < J then
-               TIM.CCR1.CCR1_L := TIM_T1H;
-
-            else
-               TIM.CCR1.CCR1_L := TIM_T0H;
-            end if;
-
-            loop
-               exit when TIM.SR.UIF;
-            end loop;
-
-            TIM.SR.UIF := False;
-         end loop;
+      for J in RST_PWM_CYCLES
+                 .. RST_PWM_CYCLES + (PIXELS * PIXEL_PWM_CYCLES) - 1
+      loop
+         Buffer (J) := TIM_CCR_T1H;
       end loop;
 
-      TIM.CCR1.CCR1_L := 0;
+      Buffer (Buffer'Last) := TIM_CCR_DIS;
+
+      DMA.S2M0AR :=
+        A0B.Types.Unsigned_32
+          (System.Storage_Elements.To_Integer (Buffer'Address));
+      DMA.S2NDTR.NDT := Buffer'Length;
+
+      Enable_TIM3;
+      DMA.S2CR.EN := True;
    end Initialize;
+
+   ---------------------------------
+   -- Initialize_DMA1_CH5_Stream2 --
+   ---------------------------------
+
+   procedure Initialize_DMA1_CH5_Stream2 is
+      use A0B.STM32F401.SVD.DMA;
+
+   begin
+      A0B.STM32F401.SVD.RCC.RCC_Periph.AHB1ENR.DMA1EN := True;
+
+      --  ??? LSIR
+
+      --  ??? HISR
+
+      --  ??? LIFCR
+
+      --  ??? HIFCR
+
+      --  SxCR
+
+      declare
+         Aux : S2CR_Register := DMA.S2CR;
+
+      begin
+         Aux.EN     := False;   --  0: Stream disabled
+         Aux.DMEIE  := False;   --  0: DME interrupt disabled
+         Aux.TEIE   := False;   --  0: TE interrupt disabled
+         Aux.HTIE   := False;   --  0: HT interrupt disabled
+         Aux.TCIE   := False;   --  0: TC interrupt disabled
+         Aux.PFCTRL := False;   --  0: The DMA is the flow controller
+         Aux.DIR    := 2#01#;   --  01: Memory-to-peripheral
+         Aux.CIRC   := False;   --  0: Circular mode disabled
+         Aux.PINC   := False;   --  0: Peripheral address pointer is fixed
+         Aux.MINC   := True;
+         --  1: Memory address pointer is incremented after each data transfer
+         --  (increment is done according to MSIZE)
+         --  Aux.PSIZE  := 2#10#;   --  10: word (32-bit)
+         Aux.PSIZE  := 2#01#;   --  01: half-word (16-bit)
+         Aux.MSIZE  := 2#01#;   --  01: half-word (16-bit)
+         Aux.PINCOS := True;
+         --  1: The offset size for the peripheral address calculation is
+         --  fixed to 4 (32-bit alignment).
+         Aux.PL     := 2#10#;   --  10: High
+         --  Aux.DMB    := False;
+         --  0: No buffer switching at the end of transfer
+         Aux.CT     := False;   --  Unused
+         Aux.PBURST := 2#00#;   --  00: single transfer
+         Aux.MBURST := 2#00#;   --  00: single transfer
+         Aux.CHSEL  := 2#101#;  --  101: channel 5 selected
+
+         DMA.S2CR := Aux;
+      end;
+
+      --  ??? SxNDTR
+
+      --  SxPAR
+
+      DMA.S2PAR :=
+        A0B.Types.Unsigned_32
+          (System.Storage_Elements.To_Integer (TIM.DMAR'Address));
+
+      --  ??? SxM0AR
+
+      --  ??? SxM1AR
+
+      --  ??? SxFCR
+   end Initialize_DMA1_CH5_Stream2;
 
    ---------------------
    -- Initialize_TIM3 --
@@ -109,7 +210,20 @@ package body Snake.Display.Hardware is
 
       --  ??? SMCR
 
-      --  ??? DIER
+      --  DIER
+
+      declare
+         Aux : DIER_Register_1 := TIM.DIER;
+
+      begin
+         Aux.UIE   := False;  --  0: Update interrupt disabled
+         Aux.CC1IE := False;  --  0: CC1 interrupt disabled
+         Aux.TIE   := False;  --  0: Trigger interrupt disabled.
+         Aux.UDE   := True;   --  1: Update DMA request enabled.
+         Aux.CC1DE := False;  --  0: CC1 DMA request disabled.
+
+         TIM.DIER := Aux;
+      end;
 
       --  ??? SR
 
@@ -190,12 +304,19 @@ package body Snake.Display.Hardware is
          TIM.CCR1 := Aux;
       end;
 
-      --  ??? DCR
+      --  DCR
+
+      declare
+         Aux : DCR_Register := TIM.DCR;
+
+      begin
+         Aux.DBA := 13;        --  CCR1
+         Aux.DBL := 2#00000#;  --  00000: 1 transfer
+
+         TIM.DCR := Aux;
+      end;
 
       --  ??? DMAR
-
-      TIM.CR1.ARPE := True;
-      TIM.CR1.CEN  := True;
    end Initialize_TIM3;
 
 end Snake.Display.Hardware;
