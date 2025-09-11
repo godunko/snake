@@ -19,7 +19,7 @@ project Snake_WeAct_BlackPill_STM32F401 is
    for Source_Dirs use
      ("../source",
       "../source/weact_blackpill_stm32f401");
-   for Object_Dir use ".objs/" & A0B_Common.Object_Dir_Suffix & "/weact_blackpill_stm32f401";
+   for Object_Dir use ".objs";
    for Exec_Dir use "../bin";
 
    package Compiler is
