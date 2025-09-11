@@ -8,6 +8,8 @@ with A0B.STM32F401.GPIO.PIOB;
 
 private package Snake.Display.Hardware is
 
+   type Intensity is mod 2 ** 8;
+
    NEOPIXEL : A0B.STM32F401.GPIO.GPIO_Line
      renames A0B.STM32F401.GPIO.PIOB.PB4;
 

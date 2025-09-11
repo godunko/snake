@@ -23,9 +23,14 @@ package body Snake.Display is
 
    procedure Set_Pixel
      (Index : Natural;
-      R     : Intensity;
-      G     : Intensity;
-      B     : Intensity) renames Snake.Display.Hardware.Set_Pixel;
+      To    : Snake.Colors.R8G8B8_Color) is
+   begin
+      Snake.Display.Hardware.Set_Pixel
+        (Index => Index,
+         R     => Snake.Display.Hardware.Intensity (To.Red),
+         G     => Snake.Display.Hardware.Intensity (To.Green),
+         B     => Snake.Display.Hardware.Intensity (To.Blue));
+   end Set_Pixel;
 
    ------------
    -- Update --

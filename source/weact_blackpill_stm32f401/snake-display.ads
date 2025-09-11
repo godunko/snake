@@ -4,17 +4,15 @@
 --  SPDX-License-Identifier: GPL-3.0-or-later
 --
 
-package Snake.Display is
+with Snake.Colors;
 
-   type Intensity is mod 2 ** 8;
+package Snake.Display is
 
    procedure Initialize;
 
    procedure Set_Pixel
      (Index : Natural;
-      R     : Intensity;
-      G     : Intensity;
-      B     : Intensity);
+      To    : Snake.Colors.R8G8B8_Color);
 
    procedure Update;
 
