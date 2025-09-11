@@ -8,7 +8,7 @@ with A0B.STM32F401.SVD.RCC;
 with A0B.STM32F401.SVD.TIM;
 with A0B.STM32F401.TIM_Function_Lines;
 
-package body Snake.Hardware is
+package body Snake.Display.Hardware is
 
    TIM : A0B.STM32F401.SVD.TIM.TIM3_Peripheral
      renames A0B.STM32F401.SVD.TIM.TIM3_Periph;
@@ -198,4 +198,4 @@ package body Snake.Hardware is
       TIM.CR1.CEN  := True;
    end Initialize_TIM3;
 
-end Snake.Hardware;
+end Snake.Display.Hardware;

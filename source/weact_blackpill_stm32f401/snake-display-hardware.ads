@@ -6,7 +6,7 @@
 
 with A0B.STM32F401.GPIO.PIOB;
 
-package Snake.Hardware is
+private package Snake.Display.Hardware is
 
    TIM_ARR : constant := 105;  --  800 kHz when runs at 84 MHz
    TIM_T0H : constant := 33;   --  ~0.4 us
@@ -17,4 +17,4 @@ package Snake.Hardware is
 
    procedure Initialize;
 
-end Snake.Hardware;
+end Snake.Display.Hardware;

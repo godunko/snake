@@ -6,7 +6,7 @@
 
 with A0B.ARMv7M.SysTick_Clock_Timer;
 
-with Snake.Hardware;
+with Snake.Display;
 
 procedure Snake.Driver is
 begin
@@ -14,7 +14,7 @@ begin
      (Use_Processor_Clock => True,
       Clock_Frequency     => 84_000_000);
 
-   Snake.Hardware.Initialize;
+   Snake.Display.Initialize;
 
    loop
       null;
