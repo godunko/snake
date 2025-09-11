@@ -13,4 +13,12 @@ private package Snake.Display.Hardware is
 
    procedure Initialize;
 
+   procedure Set_Pixel
+     (Index : Natural;
+      R     : Intensity;
+      G     : Intensity;
+      B     : Intensity);
+
+   procedure Update;
+
 end Snake.Display.Hardware;

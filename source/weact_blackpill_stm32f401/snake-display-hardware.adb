@@ -4,6 +4,8 @@
 --  SPDX-License-Identifier: GPL-3.0-or-later
 --
 
+pragma Ada_2022;
+
 with System.Storage_Elements;
 
 with A0B.STM32F401.SVD.DMA;
@@ -14,10 +16,7 @@ with A0B.Types;
 
 package body Snake.Display.Hardware is
 
-   --  use type A0B.Types.Unsigned_32;
-
-   --  PIXELS : constant := 256;
-   PIXELS : constant := 128;
+   PIXELS : constant := 256;
 
    PIXEL_PWM_CYCLES : constant := 24;
    --  Number of PWM cycles to send pixel's state
@@ -53,9 +52,8 @@ package body Snake.Display.Hardware is
 
    procedure Enable_TIM3 is
    begin
-      TIM.CCR1.CCR1_L := TIM_CCR_DIS;
-      TIM.CR1.ARPE    := True;
-      TIM.CR1.CEN     := True;
+      TIM.CR1.ARPE := True;
+      TIM.CR1.CEN  := True;
    end Enable_TIM3;
 
    ----------------
@@ -74,25 +72,19 @@ package body Snake.Display.Hardware is
 
       Initialize_DMA1_CH5_Stream2;
 
-      for J in 0 .. RST_PWM_CYCLES - 1 loop
-         Buffer (J) := TIM_CCR_RST;
-      end loop;
-
-      for J in RST_PWM_CYCLES
-                 .. RST_PWM_CYCLES + (PIXELS * PIXEL_PWM_CYCLES) - 1
-      loop
-         Buffer (J) := TIM_CCR_T1H;
-      end loop;
-
-      Buffer (Buffer'Last) := TIM_CCR_DIS;
-
-      DMA.S2M0AR :=
-        A0B.Types.Unsigned_32
-          (System.Storage_Elements.To_Integer (Buffer'Address));
-      DMA.S2NDTR.NDT := Buffer'Length;
-
       Enable_TIM3;
-      DMA.S2CR.EN := True;
+
+      --  Fill DMA buffer to clear screen
+
+      Buffer (0 .. RST_PWM_CYCLES - 1) := [others => TIM_CCR_RST];
+      Buffer (RST_PWM_CYCLES
+                .. RST_PWM_CYCLES + (PIXELS * PIXEL_PWM_CYCLES) - 1) :=
+        [others => TIM_CCR_T0H];
+      Buffer (Buffer'Last) := TIM_CCR_RST;
+
+      --  Update screen
+
+      Update;
    end Initialize;
 
    ---------------------------------
@@ -299,7 +291,7 @@ package body Snake.Display.Hardware is
          Aux : CCR1_Register_1 := TIM.CCR1;
 
       begin
-         Aux.CCR1_L := 0;
+         Aux.CCR1_L := TIM_CCR_DIS;
 
          TIM.CCR1 := Aux;
       end;
@@ -318,5 +310,74 @@ package body Snake.Display.Hardware is
 
       --  ??? DMAR
    end Initialize_TIM3;
+
+   ---------------
+   -- Set_Pixel --
+   ---------------
+
+   procedure Set_Pixel
+     (Index : Natural;
+      R     : Intensity;
+      G     : Intensity;
+      B     : Intensity)
+   is
+      use type A0B.Types.Unsigned_8;
+
+      pragma Suppress (All_Checks);
+      Aux    : A0B.Types.Unsigned_8;
+      Offset : Natural :=
+        RST_PWM_CYCLES + Index * PIXEL_PWM_CYCLES;
+
+   begin
+      Aux := A0B.Types.Unsigned_8 (G);
+
+      for J in 1 .. 8 loop
+         Buffer (Offset) :=
+           (if (Aux and 2#1000_0000#) = 0 then TIM_CCR_T0H else TIM_CCR_T1H);
+
+         Aux    := A0B.Types.Shift_Left (@, 1);
+         Offset := @ + 1;
+      end loop;
+
+      Aux := A0B.Types.Unsigned_8 (R);
+
+      for J in 1 .. 8 loop
+         Buffer (Offset) :=
+           (if (Aux and 2#1000_0000#) = 0 then TIM_CCR_T0H else TIM_CCR_T1H);
+
+         Aux    := A0B.Types.Shift_Left (@, 1);
+         Offset := @ + 1;
+      end loop;
+
+      Aux := A0B.Types.Unsigned_8 (B);
+
+      for J in 1 .. 8 loop
+         Buffer (Offset) :=
+           (if (Aux and 2#1000_0000#) = 0 then TIM_CCR_T0H else TIM_CCR_T1H);
+
+         Aux    := A0B.Types.Shift_Left (@, 1);
+         Offset := @ + 1;
+      end loop;
+   end Set_Pixel;
+
+   ------------
+   -- Update --
+   ------------
+
+   procedure Update is
+   begin
+      DMA.S2M0AR :=
+        A0B.Types.Unsigned_32
+          (System.Storage_Elements.To_Integer (Buffer'Address));
+      DMA.S2NDTR.NDT := Buffer'Length;
+      DMA.LIFCR :=
+        (CFEIF2  => True,
+         CDMEIF2 => True,
+         CTEIF2  => True,
+         CHTIF2  => True,
+         CTCIF2  => True,
+         others  => <>);
+      DMA.S2CR.EN := True;
+   end Update;
 
 end Snake.Display.Hardware;

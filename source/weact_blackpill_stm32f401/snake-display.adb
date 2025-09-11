@@ -17,4 +17,20 @@ package body Snake.Display is
       Snake.Display.Hardware.Initialize;
    end Initialize;
 
+   ---------------
+   -- Set_Pixel --
+   ---------------
+
+   procedure Set_Pixel
+     (Index : Natural;
+      R     : Intensity;
+      G     : Intensity;
+      B     : Intensity) renames Snake.Display.Hardware.Set_Pixel;
+
+   ------------
+   -- Update --
+   ------------
+
+   procedure Update renames Snake.Display.Hardware.Update;
+
 end Snake.Display;
