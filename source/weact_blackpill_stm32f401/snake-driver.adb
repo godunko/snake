@@ -19,8 +19,10 @@ procedure Snake.Driver is
    use type Interfaces.IEEE_Float_32;
    use type Interfaces.Unsigned_32;
 
-   Cnt     : Interfaces.Unsigned_32 := 0 with Volatile;
-   Cycle   : Integer := 0;
+   Cnt       : Interfaces.Unsigned_32 := 0 with Volatile;
+   Cycle     : Integer := 0;
+   Speed     : Natural := 0;
+   Direction : Integer := 1;
 
    Rainbow : array (0 .. 255) of Snake.Colors.R8G8B8_Color;
 
@@ -51,7 +53,23 @@ begin
          Snake.Display.Set_Pixel ((J + Cycle) mod 256, Rainbow (J));
       end loop;
 
-      Cycle := @ + 1;
+      if Snake.Keypad.Is_Down_Pressed then
+         Direction := -1;
+
+      elsif Snake.Keypad.Is_Up_Pressed then
+         Direction := 1;
+
+      elsif Snake.Keypad.Is_Left_Pressed then
+         Speed := Natural'Max (0, @ - 1);
+
+      elsif Snake.Keypad.Is_Right_Pressed then
+         Speed := @ + 1;
+
+      elsif Snake.Keypad.Is_Reset_Pressed then
+         Speed := 0;
+      end if;
+
+      Cycle := @ + Direction * Speed / 16;
 
       Snake.Display.Update;
    end loop;
