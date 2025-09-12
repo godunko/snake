@@ -6,17 +6,10 @@
 
 pragma Ada_2022;
 
-with Ada.Numerics.Discrete_Random;
-
 with Snake.Font;
+with Snake.Random_Generator;
 
 package body Snake.Scene is
-
-   subtype Coordinate is Integer range 1 .. 16;
-
-   package Coordinate_Random is new Ada.Numerics.Discrete_Random (Coordinate);
-
-   Generator : Coordinate_Random.Generator;
 
    ----------------
    -- Initialize --
@@ -176,9 +169,8 @@ package body Snake.Scene is
                Current_Score := @ + 1;
 
                loop
-                  Row    := Row_Index (Coordinate_Random.Random (Generator));
-                  Column :=
-                    Column_Index (Coordinate_Random.Random (Generator));
+                  Row    := Snake.Random_Generator.Random_Row;
+                  Column := Snake.Random_Generator.Random_Column;
 
                   exit when Board (Row, Column) = Empty;
                end loop;
