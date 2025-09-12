@@ -11,8 +11,9 @@ package Snake.Display is
    procedure Initialize;
 
    procedure Set_Pixel
-     (Index : Natural;
-      To    : Snake.Colors.R8G8B8_Color);
+     (X  : Natural;
+      Y  : Natural;
+      To : Snake.Colors.R8G8B8_Color);
 
    procedure Update;
 

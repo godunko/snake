@@ -22,11 +22,15 @@ package body Snake.Display is
    ---------------
 
    procedure Set_Pixel
-     (Index : Natural;
-      To    : Snake.Colors.R8G8B8_Color) is
+     (X  : Natural;
+      Y  : Natural;
+      To : Snake.Colors.R8G8B8_Color)
+   is
+      Row : constant Integer := 16 * Y;
+
    begin
       Snake.Display.Hardware.Set_Pixel
-        (Index => Index,
+        (Index => 255 - Row - (if Y mod 2 = 0 then X else 15 - X),
          R     => Snake.Display.Hardware.Intensity (To.Red),
          G     => Snake.Display.Hardware.Intensity (To.Green),
          B     => Snake.Display.Hardware.Intensity (To.Blue));
