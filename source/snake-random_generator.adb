@@ -43,4 +43,13 @@ package body Snake.Random_Generator is
       return Row_Index (Coordinate_Random.Random (Generator));
    end Random_Row;
 
+   -----------
+   -- Reset --
+   -----------
+
+   procedure Reset (Initiator : Integer) is
+   begin
+      Coordinate_Random.Reset (Generator, Initiator);
+   end Reset;
+
 end Snake.Random_Generator;

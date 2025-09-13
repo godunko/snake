@@ -8,6 +8,8 @@ package Snake.Random_Generator is
 
    procedure Initialize;
 
+   procedure Reset (Initiator : Integer);
+
    function Random_Row return Row_Index;
 
    function Random_Column return Column_Index;
