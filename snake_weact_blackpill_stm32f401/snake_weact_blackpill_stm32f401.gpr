@@ -7,12 +7,11 @@
 with "config/snake_weact_blackpill_stm32f401_config.gpr";
 
 with "a0b_common.gpr";
-with "light_blackpill_stm32f401";
 
 project Snake_WeAct_BlackPill_STM32F401 is
 
-   for Target use Light_Blackpill_STM32F401'Target;
-   for Runtime use Light_Blackpill_STM32F401'Runtime;
+   for Target use "arm-eabi";
+   for Runtime ("Ada") use "runtime";
 
    for Main use ("snake-driver.adb");
 
@@ -31,9 +30,7 @@ project Snake_WeAct_BlackPill_STM32F401 is
    end Builder;
 
    package Linker is
-      for Switches ("Ada") use
-        Light_Blackpill_STM32F401.Linker_Switches
-         & ("-Wl,--gc-sections");
+      for Switches ("Ada") use ("-Wl,--gc-sections");
    end Linker;
 
 end Snake_WeAct_BlackPill_STM32F401;

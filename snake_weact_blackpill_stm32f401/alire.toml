@@ -16,6 +16,13 @@ generate_c = false
 generate_gpr = true
 
 [[actions]]
+type = "pre-build"
+command = ["a0b-runtime", "--bb-runtimes=../../bb-runtimes-15/"]
+[[actions]]
+type = "pre-build"
+command = ["gprbuild", "-j0", "runtime/build_runtime.gpr"]
+
+[[actions]]
 type = "post-build"
 command = ["arm-eabi-objcopy", "-O", "binary", "../bin/snake_weact_blackpill_stm32f401.elf", "../bin/snake_weact_blackpill_stm32f401.bin"]
 
@@ -23,4 +30,7 @@ command = ["arm-eabi-objcopy", "-O", "binary", "../bin/snake_weact_blackpill_stm
 a0b_armv7m_systick_clock_timer = "*"
 a0b_stm32f401_gpio = "*"
 a0b_timer = "*"
-light_blackpill_stm32f401 = "*"
+gnat_arm_elf = ">=15"
+
+[[pins]]
+a0b_tools = { path='../../rtg' }

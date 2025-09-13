@@ -2,5 +2,6 @@
 /Makefile
 /alire/
 /config/
+/runtime/
 /gdbinit
 /openocd.cfg
