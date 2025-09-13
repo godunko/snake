@@ -33,4 +33,4 @@ a0b_timer = "*"
 gnat_arm_elf = ">=15"
 
 [[pins]]
-a0b_tools = { path='../../rtg' }
+a0b_tools = { path='../../a0b-tools' }
