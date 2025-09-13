@@ -13,6 +13,7 @@ with A0B.ARMv7M.SysTick_Clock_Timer;
 with Snake.Colors;
 with Snake.Display;
 with Snake.Keypad;
+with Snake.Random_Generator;
 
 procedure Snake.Driver is
 
@@ -34,6 +35,7 @@ begin
 
    Snake.Display.Initialize;
    Snake.Keypad.Initialize;
+   Snake.Random_Generator.Initialize;
 
    for J in Rainbow'Range loop
       Rainbow (J) :=
