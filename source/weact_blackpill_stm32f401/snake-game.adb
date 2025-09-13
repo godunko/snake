@@ -17,7 +17,7 @@ with Snake.Scene;
 
 package body Snake.Game is
 
-   Luminance      : constant := 0.05;
+   Luminance      : constant := 0.03;
    Empty_Color    : constant Snake.Colors.R8G8B8_Color :=  --  black
      Snake.Colors.To_R8G8B8 (Snake.Colors.To_RGB ((0.0, 0.0, 0.0)));
    Wall_Color     : constant Snake.Colors.R8G8B8_Color :=  --  white
