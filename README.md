@@ -16,7 +16,7 @@ Simple, nostalgic, and perfect for a quick coding challenge or retro gaming brea
 ## Prerequisites
 
 * [Alire](https://alire.ada.dev/)
-* Works on Linux, macOS, and Windows.
+* Linux, macOS, and Windows or WeAct Blackpill STM32F401 MCU
 
 # Installation
 
