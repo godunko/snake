@@ -10,19 +10,26 @@ with A0B.Callbacks.Generic_Parameterless;
 with A0B.Time.Clock;
 with A0B.Timer;
 
-with Snake.Controller;
 with Snake.Colors;
+with Snake.Controller;
 with Snake.Display;
 with Snake.Scene;
 
 package body Snake.Game is
 
-   Empty_Color    : constant Snake.Colors.R8G8B8_Color := (0, 0, 0);
-   Wall_Color     : constant Snake.Colors.R8G8B8_Color := (255, 255, 255);
-   Apple_Color    : constant Snake.Colors.R8G8B8_Color := (255, 219, 30);
-   Creature_Color : constant Snake.Colors.R8G8B8_Color := (0, 255, 0);
-   Crash_Color    : constant Snake.Colors.R8G8B8_Color := (255, 0, 0);
-   Font_Color     : constant Snake.Colors.R8G8B8_Color := (255, 255, 255);
+   Luminance      : constant := 0.05;
+   Empty_Color    : constant Snake.Colors.R8G8B8_Color :=  --  black
+     Snake.Colors.To_R8G8B8 (Snake.Colors.To_RGB ((0.0, 0.0, 0.0)));
+   Wall_Color     : constant Snake.Colors.R8G8B8_Color :=  --  white
+     Snake.Colors.To_R8G8B8 (Snake.Colors.To_RGB ((0.0, 0.0, Luminance)));
+   Apple_Color    : constant Snake.Colors.R8G8B8_Color :=  --  yellow
+     Snake.Colors.To_R8G8B8 (Snake.Colors.To_RGB ((0.125, 1.0, Luminance)));
+   Creature_Color : constant Snake.Colors.R8G8B8_Color :=  --  green
+     Snake.Colors.To_R8G8B8 (Snake.Colors.To_RGB ((0.333, 1.0, Luminance)));
+   Crash_Color    : constant Snake.Colors.R8G8B8_Color :=  --  red
+     Snake.Colors.To_R8G8B8 (Snake.Colors.To_RGB ((0.0, 1.0, Luminance)));
+   Font_Color     : constant Snake.Colors.R8G8B8_Color :=  --  white
+     Snake.Colors.To_R8G8B8 (Snake.Colors.To_RGB ((0.0, 0.0, Luminance)));
 
    Game_Interval  : constant A0B.Time.Time_Span := A0B.Time.Milliseconds (300);
    Game_Timestamp : A0B.Time.Monotonic_Time;
