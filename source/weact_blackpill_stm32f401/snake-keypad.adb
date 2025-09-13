@@ -7,11 +7,13 @@
 pragma Ada_2022;
 
 with A0B.Callbacks.Generic_Parameterless;
+with A0B.STM32F401.GPIO.PIOA;
 with A0B.Time.Clock;
 with A0B.Timer;
 with A0B.Types;
 
-with A0B.STM32F401.GPIO.PIOA;
+with Snake.Controller;
+with Snake.Random_Generator;
 
 package body Snake.Keypad is
 
@@ -166,6 +168,8 @@ package body Snake.Keypad is
 
    procedure Scan is
       use type A0B.Time.Monotonic_Time;
+      use type A0B.Types.Unsigned_64;
+      use type Snake.Controller.Move_Direction;
 
       procedure Update_State
         (Key    : A0B.STM32F401.GPIO.GPIO_Line;
@@ -208,6 +212,60 @@ package body Snake.Keypad is
       Update_State (Middle_Line, Middle_Scan, Middle_State);
       Update_State (Set_Line, Set_Scan, Set_State);
       Update_State (Reset_Line, Reset_Scan, Reset_State);
+
+      --  Key handling code
+
+      if Up_State.State = Pressed
+        and Up_State.Timestamp = Scan_Timestamp
+      then
+         if Snake.Controller.Direction = Snake.Controller.Stop then
+            Snake.Random_Generator.Reset
+              (Integer
+                 (A0B.Time.To_Nanoseconds (A0B.Time.Clock)
+                     mod A0B.Types.Unsigned_64 (Integer'Last)));
+         end if;
+
+         Snake.Controller.Direction := Snake.Controller.Up;
+      end if;
+
+      if Down_State.State = Pressed
+        and Down_State.Timestamp = Scan_Timestamp
+      then
+         if Snake.Controller.Direction = Snake.Controller.Stop then
+            Snake.Random_Generator.Reset
+              (Integer
+                 (A0B.Time.To_Nanoseconds (A0B.Time.Clock)
+                     mod A0B.Types.Unsigned_64 (Integer'Last)));
+         end if;
+
+         Snake.Controller.Direction := Snake.Controller.Down;
+      end if;
+
+      if Left_State.State = Pressed
+        and Left_State.Timestamp = Scan_Timestamp
+      then
+         if Snake.Controller.Direction = Snake.Controller.Stop then
+            Snake.Random_Generator.Reset
+              (Integer
+                 (A0B.Time.To_Nanoseconds (A0B.Time.Clock)
+                     mod A0B.Types.Unsigned_64 (Integer'Last)));
+         end if;
+
+         Snake.Controller.Direction := Snake.Controller.Left;
+      end if;
+
+      if Right_State.State = Pressed
+        and Right_State.Timestamp = Scan_Timestamp
+      then
+         if Snake.Controller.Direction = Snake.Controller.Stop then
+            Snake.Random_Generator.Reset
+              (Integer
+                 (A0B.Time.To_Nanoseconds (A0B.Time.Clock)
+                     mod A0B.Types.Unsigned_64 (Integer'Last)));
+         end if;
+
+         Snake.Controller.Direction := Snake.Controller.Right;
+      end if;
 
       Scan_Timestamp := @ + Scan_Interval;
       A0B.Timer.Enqueue
